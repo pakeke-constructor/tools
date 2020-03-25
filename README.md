@@ -29,8 +29,8 @@ class "par"
     __new = function(self,...) end, -- object constructer function
 
     __add = function(self,b)
-        -- __class__ allows access to parent class from object.
-        return (self.__class__(self.name..b.name))
+        -- __class allows access to parent class from object.
+        return (self.__class(self.name..b.name))
     end
 }  (    ) -- <<<< empty inheritance args; does not inherit.
 
@@ -42,7 +42,7 @@ class "pah"
     __new = 1, -- this class can't create objects; is just for example.
 
     __sub = function(self,b)
-        return self.__class__(b.name..self.name)
+        return self.__class(b.name..self.name)
     end
 
 }    (     )  -- <<<< empty inheritance args; does not inherit.
