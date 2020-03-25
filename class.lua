@@ -1,13 +1,11 @@
 
 
-local PATH = (...):gsub('%.[^%.]+$', '')
-
-local Tools = require (PATH..".init")
+local module = {}
 
 
 -- Yes, this is required for max efficiency, ternary cannot continue across loops. :/
 -- I am sure there is better way still but eh
-Tools.class_case_table = {
+module.class_case_table = {
     function(k,p) return p[1][k] end,
     function(k,p) return p[1][k] or p[2][k] end,
     function(k,p) return p[1][k] or p[2][k] or p[3][k] end,
@@ -19,11 +17,11 @@ Tools.class_case_table = {
     function(k,p) return p[1][k] or p[2][k] or p[3][k] or p[4][k] or p[5][k] or p[6][k] or p[7][k]  or p[8][k] or p[9][k] end,
     function(k,p) return p[1][k] or p[2][k] or p[3][k] or p[4][k] or p[5][k] or p[6][k] or p[7][k]  or p[8][k] or p[9][k] or p[10][k] end,
 }
-Tools.class_case_table[0] = function(t,k) return nil end
+module.class_case_table[0] = function(t,k) return nil end
 
 
 
-function Tools.class(string)
+function module.class(string)
     return function(tbl)
         return function(...)
             tbl.__parents = {...}
@@ -33,7 +31,7 @@ function Tools.class(string)
             local p = tbl.__parents
             local l = #tbl.__parents
 
-            local case_table = Tools.class_case_table
+            local case_table = module.class_case_table
             assert(tbl.__new, " Class "..string .." does not have a "..string..".__new  method."..
                 "\n ")
             local mt_tbl
@@ -61,4 +59,8 @@ function Tools.class(string)
         end
     end
 end
+
+
+return module.class
+
 
