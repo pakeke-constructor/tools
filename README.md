@@ -3,6 +3,17 @@ bunch of tools for lua
 ```lua
 local tools = require"init"     --Must be in same dir
 ```
+# complex
+```lua
+local complex = tools.complex
+
+my_c_num = complex(3, 7)    -- 3 + 7j
+--[[
+all operators supported except
+power. You can do complex^number, but not complex^complex
+modulus is complx:mod()
+]]
+```
 
 # class
 usage: 
