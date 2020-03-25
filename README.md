@@ -83,3 +83,13 @@ local blah = (obj_3 + obj) - obj_2 --  __sub called from class <pah>, __add call
 print("number of <child_class> objects:    "..#obj.__class.objects)
 -- Should get 3.
 ```
+
+# smart_iter
+```lua
+local smart_iter = tools.smart_iter
+
+local max_time = nil        -- optional argument. By default is 0.01
+love.update(dt)
+    smart_iter(array, func, max_time)
+end
+```
