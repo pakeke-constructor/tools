@@ -55,14 +55,9 @@ function Tools.class(string)
                     __call = tbl.__call or f('__call',p), __mod = tbl.__mod or f('__mod',p), __eq = tbl.__eq or f('__eq',p), __lt = tbl.__lt or f('__lt',p), __pow = tbl.__pow or f('__pow',p),
                     __unm = tbl.__unm or f('__unm',p), __concat = tbl.__concat or f('__concat',p), __sub = tbl.__sub or f('__sub',p)}
 
-            Tools[string] = tbl
+            _G[string] = tbl
             return tbl
         end
     end
 end
 
-
-
-
-
-return Tools
