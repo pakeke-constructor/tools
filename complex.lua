@@ -30,6 +30,7 @@ end
 
 COMPLEX = { -- Where r is real, and i is imag component
     r=0, i=0,
+    mod = mod,
     __index = COMPLEX,
     __add = function(a, b)
         if type(b) == "table" then
