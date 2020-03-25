@@ -79,4 +79,3 @@ end
 
 
 return setmetatable(COMPLEX, {__call = COMPLEX.new})
-
