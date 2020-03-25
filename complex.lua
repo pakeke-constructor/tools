@@ -78,4 +78,4 @@ COMPLEX.show = function(c)
 end
 
 
-require( (...):gsub('%.[^%.]+$', '')..".init" ).complex = setmetatable(COMPLEX, {__call = COMPLEX.new})
+return setmetatable(COMPLEX, {__call = COMPLEX.new})
