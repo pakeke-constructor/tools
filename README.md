@@ -12,6 +12,8 @@ my_c_num = complex(3, 7)    -- 3 + 7j
 all operators supported except
 power. You can do complex^number, but not complex^complex
 modulus is complx:mod()
+
+Access real/imag using complx.r and complx.i
 ]]
 ```
 
