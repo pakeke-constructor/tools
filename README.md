@@ -26,10 +26,11 @@ local class = tools.class
 -- <obj>.__class is reference to the parent class of any object created.
 -- <class>.__name is string name of class.
 
+
 class "par"
 {
-    __new = function(self,...) end, -- object constructer function
-
+    __new = function(self,...) end -- object constructer function
+    ,   -- comma between methods
     __add = function(self,b)
         -- __class allows access to parent class from object.
         return (self.__class(self.name..b.name))
@@ -41,8 +42,8 @@ class "par"
 
 class "pah"
 {
-    __new = 1, -- this class can't create objects; is just for example.
-
+    __new = 1 -- this class can't create objects; is just for example.
+    ,
     __sub = function(self,b)
         return self.__class(b.name..self.name)
     end
@@ -55,20 +56,22 @@ class "pah"
 -- __new is constructer function.
 -- can set a local at current location.
 
--- To disable automatic global creation, do:
-tools.no_globals = true
+-- Classes are automatically pushed to global namespace.
+-- To change this, you can set the field module.class.default = tabl,
+-- where tabl is the table new classes will be pushed to.
 
 local child_class = class "child_class"
 {
-    objects = {},
 
+    objects = {}
+    ,
     __new = function(self,name,...)
         self.name = name
         self.some_var = {...}
 
         table.insert(child_class.objects, self) -- Class can access itself.
-    end,
-
+    end
+    
 }   (  par, pah  ) -- Inherits ALL methods from par and pah.
                 -- Multiple inheritance is allowed, but capped at 10.
                 -- NOTE: methods will be searched for first in class <par>,
