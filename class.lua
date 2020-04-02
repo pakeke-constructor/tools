@@ -20,8 +20,8 @@ module.class_case_table = {
 module.class_case_table[0] = function(t,k) return nil end
 
 
-
-function module.class(string)
+module.class = { default = _G }
+setmetatable( module.class,  {__call = function(string)
     return function(tbl)
         return function(...)
             tbl.__parents = {...}
@@ -53,12 +53,12 @@ function module.class(string)
                     __call = tbl.__call or f('__call',p), __mod = tbl.__mod or f('__mod',p), __eq = tbl.__eq or f('__eq',p), __lt = tbl.__lt or f('__lt',p), __pow = tbl.__pow or f('__pow',p),
                     __unm = tbl.__unm or f('__unm',p), __concat = tbl.__concat or f('__concat',p), __sub = tbl.__sub or f('__sub',p)}
             if not Tools.no_globals then
-                _G[string] = tbl
+                module.class.default[string] = tbl
             end
             return tbl
         end
     end
-end
+end })
 
 
 return module.class
