@@ -94,7 +94,7 @@ print("number of <child_class> objects:    "..#obj.__class.objects)
 local smart_iter = tools.smart_iter
 
 local max_time = nil        -- optional argument. By default is 0.01
-update(dt)
+function update(dt)
     smart_iter(array, func, max_time)
 end
 ```
