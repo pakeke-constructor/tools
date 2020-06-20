@@ -1,12 +1,6 @@
---[[
-shove is optional argument.
 
-If you have tables you don't want to be copied, place them in `shove`, in the form
+-- Don't use shove as an argument. 
 
-shove   ::   {[dont_copy_me] = dont_copy_me}
-
-
-]]
 return function( tabl, shove )
     local new = {}
     shove = shove or {[tabl] = tabl}
