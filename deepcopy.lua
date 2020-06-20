@@ -9,7 +9,7 @@ shove   ::   {[dont_copy_me] = dont_copy_me}
 ]]
 return function( tabl, shove )
     local new = {}
-    shove = shove or {}
+    shove = shove or {[tabl] = tabl}
 
     for ke, val in pairs(tabl) do
         if type(val) == "table" then
