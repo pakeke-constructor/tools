@@ -1,7 +1,9 @@
 
 -- Don't use shove as an argument. 
 
-return function( tabl, shove )
+local deepcopy
+
+deepcopy = function( tabl, shove )
     local new = {}
     shove = shove or {[tabl] = tabl}
 
@@ -26,3 +28,8 @@ return function( tabl, shove )
 
     return setmetatable(new, tabl)
 end
+
+
+return deepcopy
+
+
