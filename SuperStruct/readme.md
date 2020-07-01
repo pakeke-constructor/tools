@@ -12,5 +12,43 @@ Main differences:
 - There is no constructor function, structure fields are copied from template.
 - Method overriding is not a thing; parent class functions are static
 
+Example of use:
+```lua
+local SuperStruct = require '<path>.SuperStruct'
 
 
+
+local ss1 = SuperStruct{ bah = 10 }
+local ss2 = SuperStruct{ foo = "foo", qqq = 99, }
+
+function ss2:blahblah()
+  print("ss2 called")
+end
+
+function ss1:blahblah()
+  print("ss1 now.")
+  self.bah = self.bah + 1
+end
+
+
+
+local Combiner = SuperStruct()
+Combiner:attach(ss2)
+Combiner:attach(ss1) -- Note order.
+
+
+
+local obj = Combiner()
+
+obj:blahblah()
+-- prints -->
+--            "ss2 called"
+--            "ss1 now."
+
+
+
+obj.bah --> 11     (remember addition)
+obj.foo = "foo"
+obj.qqq = 99
+
+```
