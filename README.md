@@ -1,5 +1,6 @@
+I don't really test anything, so be careful when using!
+
 # tools
-bunch of tools for lua
 ```lua
 local tools = require"init"     --Must be in same dir
 ```
