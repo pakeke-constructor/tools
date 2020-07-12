@@ -1,3 +1,6 @@
+-- if CLONE_USERDATA is false, lua userdata will not be copied, and will just be passed as a reference.
+local CLONE_USERDATA = false
+
 
 -- Don't use shove as an argument. 
 
@@ -16,10 +19,12 @@ deepcopy = function( tabl, shove )
                 new[ke] = deepcopy(val, shove)
             end
         elseif type(val) == "userdata" then
-            if val.clone then
-                new[ke] = val:clone() -- love2d
-            else
-                error "userdata cannot be deepcopied; requires a :clone() method"
+            if CLONE_USERDATA then
+                if val.clone then
+                    new[ke] = val:clone() -- love2d
+                else
+                    error "userdata cannot be deepcopied; requires a :clone() method"
+                end
             end
         else
             new[ke] = val
