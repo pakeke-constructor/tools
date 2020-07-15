@@ -48,7 +48,7 @@ obj:blahblah()
 
 
 obj.bah --> 11     (remember addition)
-obj.foo = "foo"
-obj.qqq = 99
+obj.foo --> "foo"
+obj.qqq --> 99
 
 ```
