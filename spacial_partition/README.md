@@ -4,7 +4,7 @@ Spacial partitioners are data structures used to seperate and update objects dep
 
 This allows us to reduce the time taken to check interactions between objects, as we only need to check for interactions within certain areas.
 
-The biggest catch with this library is that the objects need to have `.x` and `.y` attributes. If this isn't the case, and the `x` and `y` is stored somewhere else, you'll have to use either `partition:setGetters(getx, gety)` or `partition:setProxys(name_x, name_y)` to allow the spacial partitioner to read your object's position.
+The biggest catch with this library is that the objects need to have `.x` and `.y` attributes. If this isn't the case, and the `x` and `y` is stored somewhere else, you'll have to use `partition:set_getters(getx, gety)` to allow the spacial partitioner to read your object's position.
 
 
 # usage:
@@ -71,4 +71,14 @@ Also, the cell size should not be smaller than the maximum object interation dis
 partition:frozen_add(objec)
 -- Adds `objec` to spacial partition, but will not move `objec` to other cells.
 -- Is an efficient way of dealing with unmoving objects.
+
+
+
+-- If your objects do not have a `y` or `x` field, you can change how the spacial partitioner gets the positions
+-- with this function.
+partition:set_getters(
+    function(obj) return obj.body.getX() end, -- this will be used instead of `obj.x` now.
+    function(obj) return obj.body.getY() end --  (likewise for y)
+)
+
 ```
