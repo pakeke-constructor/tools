@@ -40,7 +40,7 @@ end
 
 
 ### *How do I determine the size of the cells for the partitioner?*
-**The size of the cells for the spacial partitioner must be greater than or equal to the maximum velocity of any object.**
+**The size of the cells for the spacial partitioner must be greater than or equal to the maximum velocity of any object in the partitioner.**
 If an object moves past a whole cell in one frame, the spacial partitioner will not be able to find it, and an error will be raised.
 
 However, the smaller the cells are in the spacial partitioner, the more efficient the spacial partitioner will be.
