@@ -1,3 +1,6 @@
+
+# NOT WORKING AS OF 25/08/2020
+
 # spacial_partition
 Spacial partitioners are data structures used to seperate and update objects depending on their position.
 
