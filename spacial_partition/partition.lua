@@ -14,7 +14,10 @@ local Partition = {}
 
 
 local mt = {__index = function(t,k)
-    t[k] = set()
+    t[k] = setmetatable({}, {__index = function(te,ke)
+        te[ke] = set()
+        return te[ke]
+    end})
     return t[k]
 end}
 
@@ -45,12 +48,12 @@ function Partition:update()
 end
 
 
+
 function Partition:update_obj(obj)
     -- ___rem and ___add functions have been inlined for performance.
     self:get_set(obj):remove(obj)                                     -- Same as self:___rem(obj)
     self[floor(obj.x/self.size_x)][floor(obj.y/self.size_y)]:add(obj) -- Same as self:___add(obj)
 end
-
 
 
 
@@ -84,7 +87,7 @@ function Partition:frozen_add(obj)
 end
 
 
-local er1 = 
+local er1 =
 [[Object disappeared from recorded location in spacial partitioner.
 Ensure that your spacial hasher has a cell-size that is greater than the maximum velocity of any hashed object.]]
 
@@ -210,7 +213,7 @@ end
 function Partition:modded____add(obj)
     self[floor(self.___getx(obj)/self.size_x)][floor(self.___gety(obj)/self.size_y)]:add(obj)
 end
--- An extra function that will override Partition:update_object
+-- An extra function that will override Partition:update_object if a call to Partition:setGetters is made.
 function Partition:modded_update_obj(obj)
     -- ___rem and ___add functions have been inlined for performance.
     self:get_set(obj):remove(obj)                                     -- Same as self:___rem(obj)
@@ -237,25 +240,25 @@ end
 do
     local x, y, set_, current, X, Y, sel
 
-    local iter = function( ) 
-
+    local iter
+    iter = function( )
         -- If we are at end of set:
-        if set_.len < current then
+        if set_.size < current + 1 then
             if (X-x) < 1 then -- (X-x) will vary from -1 to 1. Same for (Y-y).
                 X = X + 1
                 set_ = sel[X][Y] -- change sets.
-                current = 1 -- reset counter
-                return set_.objects[current]  -- ret obj
+                current = 0 -- reset counter
+                return iter()  -- ret obj
             else
                 if (Y-y) < 1 then
                     Y = Y + 1
-                    X = X - 2 -- revert X to base case.
+                    X = x - 1 -- revert X to base case.
                     set_ = sel[X][Y] -- change sets.
-                    current = 1 -- reset counter
-                    return set_.objects[current]
+                    current = 0 -- reset counter
+                    return iter()
 
                 else -- Else, we have ended iteration, as Y and X have reached above the cell boundaries.
-                    set_=nil 
+                    set_=nil
                     sel=nil -- (incase Partition is deleted, we dont want a memory leak)
                     return nil
                 end
@@ -274,14 +277,15 @@ do
             -- obj is a number in this scenario; equivalent to  x.
             x = floor(obj_or_x/self.size_x)
             y = floor(y_/self.size_y)
-            set_ = self[x][y]
+            set_ = self[x-1][y-1]
         else
-            set_, x, y = self:get_set(obj_or_x)
+            _, x, y = self:get_set(obj_or_x)
+            set_ = self[x-1][y-1]
         end
 
         X = x-1
         Y = y-1
-        current = 1
+        current = 0
         sel = self
 
         return iter
