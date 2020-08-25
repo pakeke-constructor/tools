@@ -1,3 +1,10 @@
+# spacial_partition
+Spacial partitioners are data structures used to seperate and update objects depending on their position.
+
+This allows us to reduce the time taken to check interactions between objects, as we only need to check for interactions within certain areas.
+
+The biggest catch with this library is that the objects need to have `.x` and `.y` attributes. If this isn't the case, and the `x` and `y` is stored somewhere else, you'll have to use either `partition:setGetters(getx, gety)` or `partition:setProxys(name_x, name_y)` to allow the spacial partitioner to read your object's position.
+
 
 # usage:
 
@@ -10,7 +17,7 @@ local partition = Partition( 100, 120 )
 
 
 -- Adds `obj` to spacial partition.
--- All objects must have an `x` and `y` attribute.
+-- All objects must have `x` and `y` attributes.   (to change this, see below.)
 partition:add( obj )
 
 
@@ -51,8 +58,8 @@ for slow_obj in partition:iter( fast_obj.x, fast_obj.y ) do
     maybe_collision( fast_obj, slow_obj )
 end
 ```
-Intuitively, it is also important to note that for object interactions,
-the cell size should not be smaller than the maximum object interation distance.
+
+Also, the cell size should not be smaller than the maximum object interation distance.
 
 
 
