@@ -1,5 +1,5 @@
 
-usage:
+# usage:
 
 ```lua
 local Partition = require("path.to.spacial_partition.partition")
