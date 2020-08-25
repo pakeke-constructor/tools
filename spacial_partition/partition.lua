@@ -37,6 +37,7 @@ end
 
 
 
+
 function Partition:update()
     for _, obj in ipairs(self.moving_objects.objects) do
         self:update_obj(obj)
@@ -46,8 +47,8 @@ end
 
 function Partition:update_obj(obj)
     -- ___rem and ___add functions have been inlined for performance.
-    self:get_set(obj):remove(obj)                                     -- Same as self:___add(obj)
-    self[floor(obj.x/self.size_x)][floor(obj.y/self.size_y)]:add(obj) -- Same as self:___rem(obj)
+    self:get_set(obj):remove(obj)                                     -- Same as self:___rem(obj)
+    self[floor(obj.x/self.size_x)][floor(obj.y/self.size_y)]:add(obj) -- Same as self:___add(obj)
 end
 
 
@@ -95,7 +96,43 @@ function Partition:get_set(obj)
     if set_:has(obj) then
         return set_, x, y
     end
-    -- Else, we need to check all surrounding cells.
+    -- This is what unnessesary performance squeezing looks like. (Used to be a loop)
+    -- Horizontal and vertical cells are checked first as they are the most likely case.
+    set_ = self[x-1][y]
+    if set_:has(obj) then
+        return set_, x-1, y
+    end
+    set_ = self[x+1][y] 
+    if set_:has(obj) then
+        return set_, x+1, y
+    end
+    set_ = self[x][y-1]
+    if set_:has(obj) then
+        return set_, x, y-1
+    end
+    set_ = self[x][y+1]
+    if set_:has(obj) then
+        return set_, x, y+1
+    end
+    set_ = self[x-1][y-1]
+    if set_:has(obj) then
+        return set_, x-1, y-1
+    end
+    set_ = self[x-1][y+1]
+    if set_:has(obj) then
+        return set_, x-1, y+1
+    end
+    set_ = self[x+1][y-1]
+    if set_:has(obj) then
+        return set_, x+1, y-1
+    end
+    set_ = self[x+1][y+1]
+    if set_:has(obj) then
+        return set_, x+1, y+1
+    end
+    --[[
+    Old code::: This is functionally equivalent to above, above is slightly quicker tho
+
     for X = x-1, x+1 do
         for Y = y-1, y+1 do
             set_ = self[X][Y]
@@ -103,10 +140,94 @@ function Partition:get_set(obj)
                 return set_, X, Y
             end
         end
-    end
+    end]]
+
     -- Object has moved further than it's cell neighbourhood boundary.
     -- Throw err
     error(er1)
+end
+
+
+
+-- An extra function that will override Partition:get_set if a call to Partition:setGetters is made.
+function Partition:modded_get_set(obj)
+    local x, y = floor(self.___getx(obj)/self.size_x), floor(self.___gety(obj)/self.size_y)
+    local set_ = self[x][y]
+    -- Try for easy way out: Assume the object hasn't moved out of it's cell
+    if set_:has(obj) then
+        return set_, x, y
+    end
+     -- This is what unnessesary performance squeezing looks like. (Used to be a loop)
+    -- Horizontal and vertical cells are checked first as they are the most likely case.
+    set_ = self[x-1][y]
+    if set_:has(obj) then
+        return set_, x-1, y
+    end
+    set_ = self[x+1][y] 
+    if set_:has(obj) then
+        return set_, x+1, y
+    end
+    set_ = self[x][y-1]
+    if set_:has(obj) then
+        return set_, x, y-1
+    end
+    set_ = self[x][y+1]
+    if set_:has(obj) then
+        return set_, x, y+1
+    end
+    set_ = self[x-1][y-1]
+    if set_:has(obj) then
+        return set_, x-1, y-1
+    end
+    set_ = self[x-1][y+1]
+    if set_:has(obj) then
+        return set_, x-1, y+1
+    end
+    set_ = self[x+1][y-1]
+    if set_:has(obj) then
+        return set_, x+1, y-1
+    end
+    set_ = self[x+1][y+1]
+    if set_:has(obj) then
+        return set_, x+1, y+1
+    end
+    --[[
+    Old code::: This is functionally equivalent to above, above is slightly quicker tho
+
+    for X = x-1, x+1 do
+        for Y = y-1, y+1 do
+            set_ = self[X][Y]
+            if set_:has(obj) then
+                return set_, X, Y
+            end
+        end
+    end]]
+    -- Object has moved further than it's cell neighbourhood boundary.
+    -- Throw err
+    error(er1)
+end
+-- An extra function that will override Partition:___add if a call to Partition:setGetters is made.
+function Partition:modded____add(obj)
+    self[floor(self.___getx(obj)/self.size_x)][floor(self.___gety(obj)/self.size_y)]:add(obj)
+end
+-- An extra function that will override Partition:update_object
+function Partition:modded_update_obj(obj)
+    -- ___rem and ___add functions have been inlined for performance.
+    self:get_set(obj):remove(obj)                                     -- Same as self:___rem(obj)
+    self[floor(self.___getx(obj)/self.size_x)][floor(self.___gety(obj)/self.size_y)]:add(obj) -- Same as self:___add(obj)
+end
+
+
+
+function Partition:setGetters( x_getter, y_getter )
+    assert(type(x_getter) == "function", "expected type function, got type:  " .. tostring(type(x_getter)))
+    assert(type(y_getter) == "function", "expected type function, got type:  " .. tostring(type(y_getter)))
+    self.___getx = x_getter
+    self.___gety = y_getter
+
+    self.get_set = self.modded_get_set
+    self.___add = self.modded____add
+    self.update_obj = self.modded_update_obj
 end
 
 
