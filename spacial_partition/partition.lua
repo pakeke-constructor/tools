@@ -222,7 +222,7 @@ end
 
 
 
-function Partition:setGetters( x_getter, y_getter )
+function Partition:set_getters( x_getter, y_getter )
     assert(type(x_getter) == "function", "expected type function, got type:  " .. tostring(type(x_getter)))
     assert(type(y_getter) == "function", "expected type function, got type:  " .. tostring(type(y_getter)))
     self.___getx = x_getter
