@@ -10,7 +10,7 @@ Main differences:
 - Superstructs are mutable at runtime and will not break children/parents when modified
 - Superstruct's object fields are defined on creation, and are static. (__newindex = error)
 - There is no constructor function, structure fields are copied from template.
-- Method overriding is not a thing; parent methods will be called ALONGSIDE regular methods.
+- Method overriding is not a thing; attached methods will be called ALONGSIDE regular methods.
 
 Example of use:
 ```lua
