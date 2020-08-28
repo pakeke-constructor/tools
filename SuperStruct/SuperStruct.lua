@@ -2,6 +2,8 @@
 
 
 
+
+
 local remove = function(tabl, item)
     for i, v in ipairs(tabl) do
         if v == item then
@@ -17,22 +19,37 @@ local is_in = function(tabl, item)
         end
     end
 end
-
-local add = function(tabl, item)
-    tabl[#tabl + 1] = item
-end
+local add = table.insert
 
 
-local function call_all(t, k, ...)
-    if type(t[k]) == "function" then
-        t[k](t, ...)
-    end
-    for _, func in ipairs(t.___attached) do
-        if type(func) == "function" then
-            func(t, ...)
+
+
+-- The function name that is currently being called. This is a really unstable way of doing it but it runs fast.
+-- (ie better than creating a new anony func each call)
+local f_name_upvalue = nil
+
+local function index(STRUCT, a,b,c)
+    -- index function for SuperStruct objects.
+    -- This function does the main work in ensuring call depth is considered
+    local structs = STRUCT.___parent.___attached
+    local fval
+    for i=1, #structs do
+        fval = structs[i][f_name_upvalue]
+        if fval then
+            fval(STRUCT, a,b,c)
         end
     end
+    if STRUCT.___parent[f_name_upvalue] then
+        STRUCT.___parent[f_name_upvalue](STRUCT, a,b,c)
+    end
+
+    return STRUCT --[[ For method chaining:
+    -myStruct:method1()
+    :method2()
+    :method3()    
+    ]]
 end
+
 
 
 
@@ -43,60 +60,43 @@ local PATH = (...):gsub('%.[^%.]+$', '')
 local deepcopy = require(PATH .. ".deepcopy")
 
 
-local SuperStruct = {}
 
-local SuperClass_mt = {
+local SuperStruct = {  }
+local SuperStruct_mt = {
     __index = SuperStruct;
-    __call = function(struct)
-        return struct:___new()
+
+    __newindex = function(t,k,v)
+        assert(type(v) == "function", "Only functions can be added to SuperStructs")
+        rawset(t,k,v)
+    end
+}
+
+local Obj_mt = {
+    __index = function(t,k)
+        f_name_upvalue = k
+        return index
     end
 }
 
 
---[[
-    Superclass is a struct module that works with classes in a unique way.
-    It is designed to make inheritance intuitive and spagetti-free.
-
-
-    PLANNING :::
-
-    Construction is the hard bit. How do you construct something when it relies on
-    8 layers of ctor funcs???? Do you just force constructers to have no arguments ???
-
-    Maybe there is no constructor; instead, when you create a struct, you specify what fields the object has.
-    i.e:  local Position  =  SuperStruct { x=0, y=0 }        <-- this is probably best idea.
-
-    The only immutable part of classes will be the initial template object!!
-    ALL other struct fields must be fully mutable
-]]
-
-local MT = {__index = call_all, __metatable = "DEFENDED"}
-local function newSuperStruct( template )
-    --[[
-        @param template The template object this struct will be based off
-        @return SuperStruct The struct that
-    ]]
-    local struct = {}
-    struct.___attached = { } -- list of attached classes (parents)
-    struct.___mt       =  MT-- metatable for objects
-
-    struct.___template = setmetatable(template, struct.___mt) -- template object
-
-    struct.___children = { } -- list of children classes
-
-    return setmetatable(struct, SuperClass_mt)
-end
-
-
 
 function SuperStruct:___new()
-    return deepcopy( self.___template )
+    -- Creates a new object from the SuperStruct.
+    local new = deepcopy(self.___template or {})
+    new.___parent = self
+    return new
 end
+SuperStruct_mt.__call = SuperStruct.___new
 
 
 
 function SuperStruct:___modify_template(otherStruct)
     local template = self.___template
+
+    if (#otherStruct.___attached > 1) then
+        error "Not allowed to attach SuperStructs with other SuperStructs attached.\nRemember: inheritance is evil! Only composition"
+    end
+
     for k,v in pairs(otherStruct.___template) do
         if is_in(template, k) then
             error("This SuperStruct already has a key value called " .. k .. ". Duplicate keys are not allowed!")
@@ -105,6 +105,8 @@ function SuperStruct:___modify_template(otherStruct)
         end
     end
 end
+
+
 
 
 
@@ -117,34 +119,33 @@ end
 
 
 
-function SuperStruct:attach( otherStruct )
-    if self == otherStruct then
-        error "No... this won't work... sorry"
-    end
-    if is_in(otherStruct.___attached, self) then
-        error "Attempted to add SuperStruct that had `self` attached to it.\nNo circular references sorry!"
-    end
 
-    add(self.___attached, otherStruct)
-    add(otherStruct.___children, self)
-
-    -- Modifying template.
-    self:___modify_template(otherStruct)
+function SuperStruct:attach(SS)
+    add(self.___attached, SS)
+    self:___modify_template(SS)
     return self
 end
 
 
-
-function SuperStruct:detach( otherStruct )
-    remove(self.___attached, otherStruct)
-    remove(otherStruct.___children, self)
-
-    self:___demodify_template(otherStruct)
+function SuperStruct:detach(SS)
+    remove(self.___attached, SS)
+    self:___demodify_template(SS)
     return self
 end
 
 
 
 
-return newSuperStruct
+
+return function( template )
+    local SS = {
+        ___template = setmetatable(template or {}, Obj_mt);
+
+        ___attached = {}
+    }
+    SS.___template.___parent = SS
+    return setmetatable(SS, SuperStruct_mt)
+end
+
+
 
