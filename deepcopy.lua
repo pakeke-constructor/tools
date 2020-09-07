@@ -25,6 +25,8 @@ deepcopy = function( tabl, shove )
                 else
                     error "userdata cannot be deepcopied; requires a :clone() method"
                 end
+            else
+                new[ke] = val 
             end
         else
             new[ke] = val
