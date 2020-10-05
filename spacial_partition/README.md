@@ -10,7 +10,7 @@ The biggest catch with this library is that the objects need to have `.x` and `.
 # usage:
 
 ```lua
-local Partition = require("path.to.spacial_partition.partition")
+local Partition = require("path.to.spacial_partition")
 
 -- cells of dimension:   100x, 120y.
 local partition = Partition( 100, 120 )
