@@ -1,6 +1,6 @@
 
-# spacial_partition
-Spacial partitioners are data structures used to seperate and update objects depending on their position.
+# spatial_partition
+Spatial partitioners are data structures used to seperate and update objects depending on their position.
 
 This allows us to reduce the time taken to check interactions between objects, as we only need to check for interactions within certain areas.
 
@@ -48,12 +48,12 @@ end
 
 
 ### *How do I determine the size of the cells for the partitioner?*
-**The size of the cells for the spacial partitioner must be greater than or equal to the maximum velocity of any object in the partitioner.**
-If an object moves past a whole cell in one frame, the spacial partitioner will not be able to find it, and an error will be raised.
+**The size of the cells for the spatial partitioner must be greater than or equal to the maximum velocity of any object in the partitioner.**
+If an object moves past a whole cell in one frame, the spatial partitioner will not be able to find it, and an error will be raised.
 
-However, the smaller the cells are in the spacial partitioner, the more efficient the spacial partitioner will be.
-Thus, it is often a good idea to exclude fast moving objects from the spacial partitioner entirely so the cell size can be made smaller.
-Remember, objects do not need to be inside the spacial partitioner to iterate over objects that are:
+However, the smaller the cells are in the spactial partitioner, the more efficient the spatial partitioner will be.
+Thus, it is often a good idea to exclude fast moving objects from the spatial partitioner entirely so the cell size can be made smaller.
+Remember, objects do not need to be inside the spatial partitioner to iterate over objects that are:
 ```lua
 for slow_obj in partition:iter( fast_obj.x, fast_obj.y ) do
     maybe_collision( fast_obj, slow_obj )
@@ -69,12 +69,12 @@ Also, the cell size should not be smaller than the maximum object interation dis
 
 ```lua
 partition:frozen_add(objec)
--- Adds `objec` to spacial partition, but will not move `objec` to other cells.
+-- Adds `objec` to spatial partition, but will not move `objec` to other cells.
 -- Is an efficient way of dealing with unmoving objects.
 
 
 
--- If your objects do not have a `y` or `x` field, you can change how the spacial partitioner gets the positions
+-- If your objects do not have a `y` or `x` field, you can change how the spatial partitioner gets the positions
 -- with this function.
 partition:set_getters(
     function(obj) return obj.body.getX() end, -- this will be used instead of `obj.x` now.
