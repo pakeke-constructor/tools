@@ -5,7 +5,7 @@ Spatial partitioners are data structures used to seperate and update objects dep
 
 This allows us to reduce the time taken to check interactions between objects, as we only need to check for interactions within certain areas.
 
-The biggest catch with this library is that the objects need to have `.x` and `.y` attributes. If this isn't the case, and the `x` and `y` is stored somewhere else, you'll have to use either `partition:setGetters(getx, gety)` or `partition:setProxys(name_x, name_y)` to allow the spatial partitioner to read your object's position.
+The biggest catch with this library is that the objects need to have `.x` and `.y` attributes. If this isn't the case, and the `x` and `y` is stored somewhere else, you'll have to use either `partition:set_getters(getx, gety)` to allow the spatial partitioner to read your object's position.
 
 
 # usage:
@@ -86,5 +86,5 @@ local function getY(obj)
 end
 
 
-partition:setGetters(getX, getY) -- Now the spatial partition will work with your objects!
+partition:set_getters(getX, getY) -- Now the spatial partition will work with your objects!
 ```
