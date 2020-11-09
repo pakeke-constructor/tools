@@ -74,3 +74,17 @@ partition:frozen_add(objec)
 -- Adds `objec` to spatial partition, but will not move `objec` to other cells.
 -- Is an efficient way of dealing with unmoving objects.
 ```
+
+If your objects do not have `.x` and `.y` fields:
+```lua
+local function getX(obj)
+    return obj.position.x
+end
+
+local function getY(obj)
+    return obj.position.y
+end
+
+
+partition:setGetters(getX, getY) -- Now the spatial partition will work with your objects!
+```
