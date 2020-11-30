@@ -64,7 +64,22 @@ end
 
 Also, the cell size should not be smaller than the maximum object interation distance.
 
+# !!!! BIG WARNING!!!!
+Do NOT nest loops in this library. i.e this:
+```lua
+for obj1 in partition:iter(x1, y1) do
+    for obj2 in partition:iter(x2, y2) do
+        print("?")
+    end
+end 
+```
+This is totally undefined behaviour!!!
+Since the iteration function is not anonymously created each time and instead uses local upvalues,
+running another iterator whilst another is running will seriously mess things up.
+(This may seem crappy, but this actually keeps the GC way happier.)
 
+If you really do need nested iteration, run over the partition quickly and cache the entries in an array,
+then loop over that array normally
 
 ### Optional functionality:
 
